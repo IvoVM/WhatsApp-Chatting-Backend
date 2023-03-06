@@ -48,20 +48,7 @@ usersSchema.static("sendData", async function (userName) {
     return false;
   }
 });
-// const sendData= (userName)=>{
-//   if (!userName)  return false;
-//   try {
-//     const user =Usuario.findOne( userName );
-//     if (user) {
-//       return console.log(user.userName)
-//     } else {
-//       return false;
-//     }
-//   } catch (error) {
-//     console.log("error al enviar Data");
-//     return false;
-//   }
-// }
+
 
 const Usuario = new mongoose.model("users", usersSchema);
 
