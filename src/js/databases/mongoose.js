@@ -4,6 +4,7 @@ mongoose.connect("mongodb://0.0.0.0:27017/chatApp");
 const usersSchema = new mongoose.Schema({
   userName: { type: String, require: true, unique: true },
   password: { type: String, require: true },
+  perfilImg: { type: String },
 });
 usersSchema.static("isThisNameInUse", async function (userName) {
   if (!userName) return false;
@@ -48,7 +49,6 @@ usersSchema.static("sendData", async function (userName) {
     return false;
   }
 });
-
 
 const Usuario = new mongoose.model("users", usersSchema);
 
