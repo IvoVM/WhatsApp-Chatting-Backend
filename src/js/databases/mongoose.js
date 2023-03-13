@@ -6,6 +6,7 @@ const usersSchema = new mongoose.Schema({
   password: { type: String, require: true },
   perfilImg: { type: String },
 });
+
 usersSchema.static("isThisNameInUse", async function (userName) {
   if (!userName) return false;
   try {
@@ -38,7 +39,7 @@ usersSchema.static("login", async function (userName, password) {
 usersSchema.static("sendData", async function (userName) {
   if (!userName) return false;
   try {
-    const user = await this.findOne({ userName });
+    const user = await this.findOne();
     if (user) {
       return user._id;
     } else {
@@ -47,6 +48,15 @@ usersSchema.static("sendData", async function (userName) {
   } catch (error) {
     console.log("error al intectar logearse");
     return false;
+  }
+});
+
+usersSchema.static("getUsers", async function () {
+  try {
+    const users = await this.find().select("select userName from users");
+    return users;
+  } catch (error) {
+    console.log("error al intentar transferir usuarios");
   }
 });
 

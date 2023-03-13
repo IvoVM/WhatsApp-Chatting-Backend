@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const Usuario = require("./databases/mongoose");
 const jwtoken = require("./jwt/jwt.js");
+const jwt = require("jsonwebtoken");
 
 //Register
 
@@ -22,21 +23,25 @@ app.post("/api/auth/register", async (req, res) => {
 //login
 
 app.post("/api/auth/login", async (req, res) => {
-  try {
-    let user = req.body;
-    const login = await Usuario.login(req.body.userName, req.body.password);
-    if (login) {
-      //enviar datos
-      return jwtoken.sendToken(user, req, res);
-    } else {
+  let users = await Usuario.getUsers();
+  let user = req.body;
+  const login = await Usuario.login(req.body.userName, req.body.password);
+  if (login) {
+    //enviar datos
+    return jwt.sign(user, "secretkey", (err, token) => {
       res.json({
-        success: false,
-        message: "usuario o contraseña incorrectos",
+        message: "succesfully registered",
+        success: true,
+        username: req.body.userName,
+        token: token,
+        users
       });
-    }
-  } catch (error) {
-    console.log(error);
+    });
+  } else {
+    res.json({
+      success: false,
+      message: "usuario o contraseña incorrectos",
+    });
   }
 });
-
 module.exports = app;
