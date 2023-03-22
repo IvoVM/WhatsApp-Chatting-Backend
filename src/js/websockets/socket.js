@@ -1,18 +1,23 @@
 const usersOnline = [];
+
 module.exports = (io) => {
   io.on("connection", (socket) => {
+    
+    //Update usersList
+    const updateUsersList = () => {
+      socket.emit("updateUsersList", usersOnline);
+    };
+
     // User Loged In
     socket.on("newLogedUser", (username) => {
-      
-
       if (usersOnline.indexOf(username) == -1) {
         //That user is a new one
         usersOnline.push(username);
         socket.nickname = username;
-        socket.emit("updateUsersList", usersOnline);
+        updateUsersList();
         console.log(usersOnline);
       } else {
-        return false;
+        return;
       }
     });
 
@@ -35,6 +40,14 @@ module.exports = (io) => {
     socket.on("sendMessage", (messageInfo) => {
       messageInfo.me = false;
       socket.emit("receiveMessage", messageInfo);
+    });
+
+    socket.on("disconnect", () => {
+      if (!socket.nickname) return;
+      else {
+        usersOnline.splice(usersOnline.indexOf(socket.nickname), 1);
+        updateUsersList();
+      }
     });
   });
 };
